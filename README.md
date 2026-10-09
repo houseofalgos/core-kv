@@ -22,6 +22,32 @@ Start here:
 **[Problem & Vision](docs/01_PROBLEM_AND_VISION.md)** — the problem Core KV aims to solve, the proposed approach, and how it differs from 
 conventional shared-state and distributed key-value-store architectures.
 
+## Build & Execute
+
+### Configure
+
+```sh
+cmake -S . -B build -G Ninja -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++
+```
+
+Generates Ninja build files in `build/` from the current source directory, using the specified Clang compiler.
+
+### Build
+
+```sh
+cmake --build build/
+```
+
+Compiles and links the project using the generated build files in `build/`.
+
+### Execute
+
+```sh
+build/core_kv
+```
+
+Runs the `core_kv` executable produced by the build.
+
 ## License
 
 See [LICENSE](LICENSE).

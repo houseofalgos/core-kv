@@ -33,17 +33,19 @@ that coordination occurs only where the system's correctness requires it.
 
 **Core KV** is a C++ distributed key-value store organized around shard-per-core state ownership.
 
-Keys map to logical partitions, partitions map to machines, and each machine maps its local partitions to dedicated CPU
-shards. A core owns and mutates its local state, requests for another shard are forwarded through explicit message 
+Keys map to logical partitions, whose replicas are placed on machines and assigned to node-local CPU shards.
+A shard owns and mutates its local replica state; requests for another shard are forwarded through explicit message
 passing rather than allowing arbitrary threads to concurrently mutate the same data structures.
 
 ``` text
-Key <-> Partition <-> Machine <-> CPU Core <-> Local State
+Key -> Partition -> Replica Machine -> CPU Shard -> Local State
 ```
 
 The data plane should keep the common request path local to the owning core while supporting explicit cross-core and
 cross-node communication when required. The control plane maintains cluster membership, partition ownership, replica
 placement, leadership/epochs, and rebalancing state.
+
+In ScyllaDB, ordinary table writes are leaderless; Raft coordinates schema/topology and strongly consistent tablet data.
 
 A critical requirement is **ownership-safe concurrency**. A key cannot be concurrently mutated by arbitrary worker
 threads merely because they share an address space. Core KV therefore makes ownership explicit: state is mutated by its
